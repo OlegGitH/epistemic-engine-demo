@@ -1,0 +1,16 @@
+{
+  "name": "epistemic-engine-demo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Food Lens: a transparent demo image classifier for Epistemic Engine testing.",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test",
+    "smoke": "node scripts/smoke.mjs",
+    "evidence": "node scripts/write-evidence.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

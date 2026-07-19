@@ -1,0 +1,39 @@
+name: Food Lens CI
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run smoke
+      - run: npm run evidence
+      - name: Evaluate Epistemic release decision
+        uses: OlegGitH/epistemic-engine/adapters/github-action@40839591d7c7056506767a18ba544fe2966a48df
+        with:
+          config: .epistemic.yaml
+          certificate: .epistemic/certificate.json
+      - name: Publish report and certificate to Epistemic dashboard
+        if: always()
+        env:
+          EPISTEMIC_ENDPOINT: ${{ vars.EPISTEMIC_ENDPOINT }}
+          EPISTEMIC_INGEST_TOKEN: ${{ secrets.EPISTEMIC_INGEST_TOKEN }}
+          EPISTEMIC_AI_SYSTEM_ID: ${{ vars.EPISTEMIC_AI_SYSTEM_ID }}
+        run: node scripts/publish-epistemic.mjs
+      - name: Upload Epistemic evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: food-lens-epistemic-evidence
+          path: |
+            .epistemic/ci-evidence.json
+            .epistemic/project-quality.json

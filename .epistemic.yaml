@@ -1,0 +1,27 @@
+api_version: epistemic.dev/v1alpha1
+mode: advise
+decision:
+  id: food-lens-release
+  recommendation: The Food Lens demo is safe to publish.
+  action_type: software_deployment
+  subject_type: repository
+  subject_id: OlegGitH/epistemic-engine-demo
+  risk_level: medium
+  approved: false
+provider:
+  type: local
+requirements:
+  - id: tests
+    description: Classifier unit tests and API smoke tests pass.
+    critical: true
+    evidence_types: [json]
+  - id: privacy
+    description: Raw food images remain in the browser during demo analysis.
+    critical: true
+    evidence_types: [json]
+sources:
+  - type: json
+    path: .epistemic/ci-evidence.json
+outputs:
+  result: .epistemic/result.json
+  certificate: .epistemic/certificate.json

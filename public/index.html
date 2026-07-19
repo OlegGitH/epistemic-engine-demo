@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Food Lens is a transparent demo image classifier for Epistemic Engine testing.">
+  <title>Food Lens · Epistemic Demo</title>
+  <link rel="stylesheet" href="/styles.css">
+  <style>[hidden]{display:none!important}</style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/"><span class="brand-mark">FL</span><span><b>Food Lens</b><small>Epistemic demo</small></span></a>
+    <div class="model-state"><i></i><span>Demo model ready</span><code>v0.1</code></div>
+    <a class="repo-link" href="https://github.com/OlegGitH/epistemic-engine-demo" target="_blank" rel="noreferrer">OlegGitH / epistemic-engine-demo ↗</a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Visual food check · educational demo</p>
+        <h1>What’s really on<br><em>your plate?</em></h1>
+        <p>Upload a food image and follow every visual signal behind a simple healthiness score. No raw image pixels leave your browser.</p>
+      </div>
+      <div class="hero-note"><span>01</span><p><b>Transparent by design.</b> This deterministic model exposes its inputs, score, confidence, and limitations.</p></div>
+    </section>
+
+    <section class="workspace">
+      <section class="capture-card panel">
+        <header><div><span class="section-number">A</span><h2>Add a food image</h2></div><small>JPG · PNG · WEBP · SVG</small></header>
+        <label class="dropzone" id="dropzone" for="image-input">
+          <input id="image-input" type="file" accept="image/jpeg,image/png,image/webp,image/svg+xml">
+          <div id="upload-prompt" class="upload-prompt"><span class="upload-icon">↑</span><b>Drop your meal photo here</b><p>or click to choose an image</p><em>Image stays in this browser</em></div>
+          <img id="preview" alt="Food selected for analysis" hidden>
+          <button id="replace" type="button" hidden>Choose another image</button>
+        </label>
+        <div class="samples">
+          <div><b>Or try a sample</b><small>Purpose-built demo images</small></div>
+          <button class="sample" data-src="/samples/salad-bowl.svg" data-name="garden-salad-bowl.svg"><img src="/samples/salad-bowl.svg" alt="Illustrated salad bowl"><span>Garden bowl</span></button>
+          <button class="sample" data-src="/samples/pizza.svg" data-name="cheese-pizza.svg"><img src="/samples/pizza.svg" alt="Illustrated pizza"><span>Pizza</span></button>
+          <button class="sample" data-src="/samples/donut.svg" data-name="pink-donut.svg"><img src="/samples/donut.svg" alt="Illustrated donut"><span>Donut</span></button>
+        </div>
+      </section>
+
+      <section class="result-card panel" aria-live="polite">
+        <header><div><span class="section-number">B</span><h2>Model assessment</h2></div><span id="verdict-badge" class="verdict-badge idle">Waiting for image</span></header>
+        <div id="empty-result" class="empty-result"><div class="scan-orbit"><i></i><span>?</span></div><h3>Your result will appear here</h3><p>Choose an image to inspect the visual evidence and classification.</p></div>
+        <div id="loading-result" class="loading-result" hidden><div class="scanline"></div><p id="loading-copy">Reading image locally…</p></div>
+        <div id="result" class="result" hidden>
+          <div class="score-row">
+            <div id="score-ring" class="score-ring"><div><strong id="score">—</strong><span>/ 100</span></div></div>
+            <div class="result-copy"><p>Food Lens score</p><h3 id="classification">—</h3><p id="summary"></p><div class="confidence"><span>Model confidence</span><b id="confidence">—</b></div></div>
+          </div>
+          <div class="detected"><span>Visual interpretation</span><div id="detected-items"></div></div>
+          <div class="signal-list" id="signals"></div>
+          <p class="disclaimer" id="disclaimer"></p>
+        </div>
+      </section>
+    </section>
+
+    <section class="explain-grid">
+      <section class="pipeline panel">
+        <header><div><span class="section-number">C</span><h2>Analysis trace</h2></div><small id="trace-state">Idle</small></header>
+        <div class="pipeline-steps">
+          <article data-stage="capture"><span>01</span><div><b>Local image capture</b><small>Decode and resize to a 48×48 sample.</small></div><i></i></article>
+          <article data-stage="features"><span>02</span><div><b>Visual feature extraction</b><small>Measure color, brightness, variety, and edges.</small></div><i></i></article>
+          <article data-stage="classify"><span>03</span><div><b>Deterministic classification</b><small>Apply the versioned Food Lens scoring policy.</small></div><i></i></article>
+          <article data-stage="explain"><span>04</span><div><b>Evidence explanation</b><small>Return the score, signals, digest, and limitations.</small></div><i></i></article>
+        </div>
+      </section>
+      <section class="evidence panel">
+        <header><div><span class="section-number">D</span><h2>Epistemic evidence</h2></div><small>Inspectable output</small></header>
+        <div id="evidence-empty" class="evidence-empty">Evidence metadata appears after an analysis.</div>
+        <dl id="evidence" hidden>
+          <div><dt>Model</dt><dd id="evidence-model"></dd></div>
+          <div><dt>Image proof</dt><dd><code id="evidence-hash"></code></dd></div>
+          <div><dt>Method</dt><dd id="evidence-method"></dd></div>
+          <div><dt>Raw image sent</dt><dd class="good">No</dd></div>
+        </dl>
+      </section>
+    </section>
+  </main>
+  <footer><span>Food Lens is a product demonstration—not a nutrition, allergy, or medical diagnostic tool.</span><span>Built for the Epistemic Engine evidence pipeline.</span></footer>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

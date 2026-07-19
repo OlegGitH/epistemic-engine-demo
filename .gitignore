@@ -1,0 +1,6 @@
+node_modules/
+.epistemic/*.json
+!.epistemic/.gitkeep
+coverage/
+.DS_Store
+*.log

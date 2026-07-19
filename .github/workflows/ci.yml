@@ -37,3 +37,48 @@ jobs:
           path: |
             .epistemic/ci-evidence.json
             .epistemic/project-quality.json
+
+  engine-scope:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Food Lens demo
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Check out pinned Epistemic Engine
+        uses: actions/checkout@v4
+        with:
+          repository: OlegGitH/epistemic-engine
+          ref: 0c0eba4d1278fca342380bf4e7b61d49097d46a3
+          path: .engine
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: .engine/go.mod
+          cache-dependency-path: .engine/go.sum
+      - run: npm ci
+      - name: Start isolated in-memory Epistemic Engine
+        run: |
+          cd .engine
+          nohup go run ./apps/control-plane/cmd/server > ../epistemic-engine.log 2>&1 &
+          for attempt in $(seq 1 90); do
+            if curl --fail --silent http://127.0.0.1:8080/healthz >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat ../epistemic-engine.log
+          exit 1
+      - name: Exercise full engine scope
+        run: npm run test:engine
+      - name: Upload full-scope report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: food-lens-engine-scope
+          if-no-files-found: warn
+          path: |
+            .epistemic/engine-scope-report.json
+            epistemic-engine.log

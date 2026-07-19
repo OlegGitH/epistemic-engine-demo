@@ -8,7 +8,9 @@
     "start": "node server.mjs",
     "test": "node --test",
     "smoke": "node scripts/smoke.mjs",
-    "evidence": "node scripts/write-evidence.mjs"
+    "evidence": "node scripts/write-evidence.mjs",
+    "test:engine": "node scripts/check-engine-scope.mjs",
+    "test:full": "npm test && npm run smoke && npm run evidence && npm run test:engine"
   },
   "engines": {
     "node": ">=20"

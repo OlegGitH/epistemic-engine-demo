@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { analyzeFoodImage } from "./src/classifier.mjs";
+import { enforceAnalysisInput, InputPolicyError } from "./src/input-policy.mjs";
 
 const root = fileURLToPath(new URL(".", import.meta.url));
 const publicDir = join(root, "public");
@@ -14,7 +15,7 @@ export function createFoodLensServer() {
       const url = new URL(request.url || "/", "http://localhost");
       if (request.method === "GET" && url.pathname === "/api/health") return json(response, 200, { status:"ok", model:"food-lens-demo-v0.1" });
       if (request.method === "POST" && url.pathname === "/api/analyze") {
-        const body = await readJSON(request);
+        const body = enforceAnalysisInput(await readJSON(request));
         return json(response, 200, analyzeFoodImage(body));
       }
       if (request.method !== "GET" && request.method !== "HEAD") return json(response, 405, { error:"method_not_allowed" });
@@ -25,8 +26,8 @@ export function createFoodLensServer() {
       response.writeHead(200, { "Content-Type":contentTypes[extname(target)] || "application/octet-stream", "Cache-Control":"no-store" });
       response.end(request.method === "HEAD" ? undefined : content);
     } catch (error) {
-      const status = error?.code === "ENOENT" ? 404 : error?.message === "payload_too_large" ? 413 : error instanceof SyntaxError ? 400 : 500;
-      json(response, status, { error:status === 500 ? "internal_error" : error.message || "not_found" });
+      const status = error?.code === "ENOENT" ? 404 : error?.message === "payload_too_large" ? 413 : error instanceof InputPolicyError ? error.status : error instanceof SyntaxError ? 400 : 500;
+      json(response, status, { error:status === 500 ? "internal_error" : error.code || error.message || "not_found", message:status === 500 ? undefined : error.message });
     }
   });
 }

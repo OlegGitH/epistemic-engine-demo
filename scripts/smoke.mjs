@@ -6,7 +6,9 @@ const child=spawn(process.execPath,["server.mjs"],{cwd:new URL("..",import.meta.
 try {
   for(let attempt=0;attempt<40;attempt++){try{if((await fetch(`${base}/api/health`)).ok)break}catch{}await new Promise(resolve=>setTimeout(resolve,100));if(attempt===39)throw new Error("server did not start")}
   const page=await fetch(base); assert.equal(page.status,200); assert.match(await page.text(),/Food Lens/);
-  const response=await fetch(`${base}/api/analyze`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({filename:"salad-bowl.svg",features:{average_rgb:[70,155,74],brightness:116,colorfulness:70,edge_density:.14}})});
+  const response=await fetch(`${base}/api/analyze`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({filename:"salad-bowl.svg",image_sha256:"a".repeat(64),size:4096,features:{average_rgb:[70,155,74],brightness:116,colorfulness:70,edge_density:.14}})});
   assert.equal(response.status,200); const result=await response.json(); assert.equal(result.classification,"healthy"); assert.ok(result.evidence.model);
+  const rejected=await fetch(`${base}/api/analyze`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({raw_image:"unsafe",features:{average_rgb:[70,155,74]}})});
+  assert.equal(rejected.status,422); assert.equal((await rejected.json()).error,"raw_image_forbidden");
   console.log("food-lens-smoke-ok");
 } finally { child.kill(); }

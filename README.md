@@ -14,6 +14,8 @@ The demo itself stays deterministic so judges can reproduce every branch outcome
 
 The separate [PR requirement coverage lab](docs/pr-requirement-coverage-lab.md) compares written requests with PR text and supplied code, test, and documentation artifacts. Its five scenarios prove that the Engine allows complete coverage, marks partial work conditional, catches missing requirements, blocks contradictions, and rejects high model confidence that has no evidence reference.
 
+Each PR-coverage outcome is available as a dedicated `scenario/pr-*` branch. The branch manifest runs only that fixture in CI; `main` retains the full five-scenario regression matrix.
+
 For credentialed evaluation, the lab also ships a private [GCP Cloud Run Job deployment](deploy/gcp/deploy-pr-review-job.sh). The job reads `OPENAI_API_KEY` from Secret Manager at runtime, calls the Responses API server-side, publishes results to Epistemic Engine, and has no idle service instance.
 
 Supported platforms are Windows, macOS, and Linux with Node.js 20 or newer. This repository is licensed under the [MIT License](LICENSE).

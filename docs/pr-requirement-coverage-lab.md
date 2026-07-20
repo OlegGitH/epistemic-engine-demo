@@ -10,9 +10,26 @@ This lab asks a second demo AI system to compare a written change request with P
 | Contradicted | PR text claims compatibility while a legacy test fails | `CONTRADICTED` | Blocked despite approval |
 | Confidence only | 99% reviewer confidence with no artifact reference | `INSUFFICIENT_EVIDENCE` | Blocked |
 
+Each path also has a dedicated branch. The branch manifest selects exactly one PR fixture while the `main` branch continues to run the complete five-scenario matrix.
+
+| Branch | Selected fixture |
+| --- | --- |
+| `scenario/pr-fully-covered` | `fully-covered` |
+| `scenario/pr-partially-covered` | `partially-covered` |
+| `scenario/pr-missing-coverage` | `missing-coverage` |
+| `scenario/pr-contradicted` | `contradicted` |
+| `scenario/pr-confidence-only` | `confidence-only` |
+
 The default provider is recorded and deterministic. It tests the real application, Engine, database, policy, certificate, human report, and dashboard paths without pretending that a live model call occurred.
 
 ```sh
+npm run test:pr-review
+```
+
+Without switching branches, select a single scenario explicitly:
+
+```powershell
+$env:PR_REVIEW_SCENARIO = "missing-coverage"
 npm run test:pr-review
 ```
 

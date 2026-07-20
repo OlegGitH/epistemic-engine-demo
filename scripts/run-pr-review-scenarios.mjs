@@ -6,10 +6,20 @@ const endpoint = (process.env.EPISTEMIC_ENDPOINT || "http://127.0.0.1:8080").rep
 const dashboardEndpoint = (process.env.EPISTEMIC_DASHBOARD_ENDPOINT || "http://127.0.0.1:3000").replace(/\/$/, "");
 const provider = process.env.PR_REVIEW_PROVIDER || "recorded";
 const stamp = `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
+const manifest = JSON.parse(await readFile("epistemic-scenario.json", "utf8"));
 const fixtureDir = new URL("../fixtures/pr-review/", import.meta.url);
-const fixtureNames = (await readdir(fixtureDir)).filter(name => name.endsWith(".json")).sort();
+const availableFixtureNames = (await readdir(fixtureDir)).filter(name => name.endsWith(".json")).sort();
+assert.ok(availableFixtureNames.length >= 5, "expected the full PR coverage scenario matrix");
+const selectedScenario = process.env.PR_REVIEW_SCENARIO || manifest.pr_review_scenario || "all";
+const fixtureNames = selectedScenario === "all"
+  ? availableFixtureNames
+  : availableFixtureNames.filter(name => name === `${selectedScenario}.json`);
+assert.ok(fixtureNames.length > 0, `unknown PR review scenario: ${selectedScenario}`);
 const fixtures = await Promise.all(fixtureNames.map(async name => JSON.parse(await readFile(new URL(name, fixtureDir), "utf8"))));
-assert.ok(fixtures.length >= 5, "expected the full PR coverage scenario matrix");
+const branch = process.env.GITHUB_HEAD_REF || process.env.GITHUB_REF_NAME || manifest.branch || "local";
+if (process.env.GITHUB_ACTIONS === "true" && manifest.branch) {
+  assert.equal(branch, manifest.branch, `scenario manifest is intended for ${manifest.branch}, not ${branch}`);
+}
 
 const health = await api("/health");
 assert.equal(health.status, "ok");
@@ -130,6 +140,8 @@ const suiteReport = {
   status:"passed",
   generated_at:new Date().toISOString(),
   provider,
+  selected_scenario:selectedScenario,
+  branch,
   honest_mode:provider === "openai" ? "live OpenAI Responses API" : "recorded deterministic model output",
   engine:{ endpoint, storage:health.storage || "unknown", durable:health.durable === true },
   account_id:account.id,

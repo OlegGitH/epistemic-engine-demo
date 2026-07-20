@@ -25,3 +25,4 @@ sources:
 outputs:
   result: .epistemic/result.json
   certificate: .epistemic/certificate.json
+  report: .epistemic/certificate-report.md

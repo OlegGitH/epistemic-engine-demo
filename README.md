@@ -27,6 +27,7 @@ With the Epistemic Engine running on port `8080`, exercise its dependency-free f
 
 ```bash
 npm run test:engine
+npm run test:persistence
 ```
 
 Or run the application, evidence, and engine checks together:
@@ -35,7 +36,7 @@ Or run the application, evidence, and engine checks together:
 npm run test:full
 ```
 
-Set `EPISTEMIC_ENDPOINT` to target another Engine URL. The report is written to `.epistemic/engine-scope-report.json` and includes a dashboard URL for the isolated test account. The repository has no runtime dependencies. Node.js 20 or newer is sufficient.
+Set `EPISTEMIC_ENDPOINT` to target another Engine URL. Set `EPISTEMIC_REQUIRE_DURABLE=true` to require a PostgreSQL-backed health response. The scope report is written to `.epistemic/engine-scope-report.json` and includes the isolated test account plus a persistence probe. After restarting the Engine, `npm run test:persistence` reloads the same account dashboard, run graph, certificate, human report, and certificate digest. Its proof is written to `.epistemic/persistence-report.json`.
 
 ## Engine scope matrix
 
@@ -55,7 +56,7 @@ The full-scope harness makes every expected outcome executable:
 | Dashboard aggregation | Runs, claims, evidence, contradictions, reports, AI usage, and certificates aggregated |
 | Streaming | Run endpoint emits an SSE graph snapshot |
 
-The GitHub workflow starts a pinned, isolated in-memory Engine and runs this matrix on every change. PostgreSQL, optional Docker/Codex/OpenAI integrations, and GCP infrastructure remain separate integration environments and are listed explicitly as exclusions in the generated report.
+The GitHub workflow starts a pinned Engine with a PostgreSQL service, runs this matrix, restarts the Engine, and proves that the account state and certificate digest persist. Optional Docker/Codex/OpenAI integrations and GCP infrastructure remain separate integration environments and are listed explicitly as exclusions in the generated report.
 
 ## Evidence boundary
 
@@ -67,5 +68,7 @@ The GitHub workflow starts a pinned, isolated in-memory Engine and runs this mat
 - The deterministic behavior makes CI and Epistemic evidence reproducible.
 
 `.epistemic.yaml` describes the release decision and `.github/workflows/ci.yml` runs unit tests, an API smoke test, produces executable evidence, evaluates the portable release decision, and exercises the pinned Engine scope.
+
+Evaluation writes two certificate views: `.epistemic/certificate.json` is the immutable machine result and `.epistemic/certificate-report.md` is the clear human report. The report leads with **PROCEED** or **DO NOT PROCEED**, explains blockers and conditions, and includes the machine certificate digest.
 
 When `EPISTEMIC_ENDPOINT`, `EPISTEMIC_AI_SYSTEM_ID`, and the `EPISTEMIC_INGEST_TOKEN` secret are configured in GitHub, the workflow publishes its real commit SHA, report, and verified certificate to the account dashboard. Without those values, publication is skipped while tests and local certification still run.

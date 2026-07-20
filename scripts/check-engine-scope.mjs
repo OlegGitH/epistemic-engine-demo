@@ -5,11 +5,16 @@ const endpoint = (process.env.EPISTEMIC_ENDPOINT || "http://127.0.0.1:8080").rep
 const stamp = `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
 const checks = [];
 const startedAt = new Date();
+const durableRequired = process.env.EPISTEMIC_REQUIRE_DURABLE === "true";
 
 const record = (id, detail, values = {}) => checks.push({ id, status:"passed", detail, ...values });
 
 const health = await api("/healthz");
 assert.equal(health.body.status, "ok");
+if (durableRequired) {
+  assert.equal(health.body.storage, "postgresql");
+  assert.equal(health.body.durable, true);
+}
 const discovery = await api("/.well-known/epistemic");
 for (const feature of ["batch", "certificate", "context-propagation", "idempotency", "ordering", "stream", "synchronous-evaluation"]) {
   assert.ok(discovery.body.features.includes(feature), `missing advertised feature: ${feature}`);
@@ -200,15 +205,20 @@ const scopeReport = {
   schema_version:"epistemic-engine-scope/v1",
   status:"passed",
   endpoint,
+  storage:health.body.storage || "unknown",
+  durable:health.body.durable === true,
   started_at:startedAt.toISOString(),
   finished_at:finishedAt.toISOString(),
   duration_ms:finishedAt - startedAt,
   account_id:account.id,
   project_id:project.id,
   dashboard_url:`http://127.0.0.1:3000/?account=${account.id}`,
+  persistence_probe:{ account_id:account.id, project_id:project.id, run_id:supportedRun.id, decision_id:supportedGraph.decision.id, certificate_digest:supportedCertificate.proof.digest },
   checks,
   exclusions:[
-    "PostgreSQL persistence requires TEST_DATABASE_URL and is covered by the engine repository integration suite.",
+    durableRequired
+      ? "No persistence exclusion: PostgreSQL is required for this run and restart survival is checked separately."
+      : "PostgreSQL restart persistence is checked only when EPISTEMIC_REQUIRE_DURABLE=true.",
     "Docker/Codex/OpenAI adapters are optional approval-gated integrations and are not invoked by this dependency-free demo harness.",
     "GCP infrastructure deployment is not exercised by a local engine run."
   ]

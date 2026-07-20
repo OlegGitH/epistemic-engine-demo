@@ -1,7 +1,7 @@
 {
   "schema_version": "epistemic-branch-scenario/v1",
   "scenario": "supported-release",
-  "pr_review_scenario": "all",
-  "branch": "main",
-  "description": "A fully evidenced release is verified and allowed."
+  "pr_review_scenario": "fully-covered",
+  "branch": "scenario/pr-fully-covered",
+  "description": "Every declared PR requirement has direct code, test, and documentation evidence."
 }

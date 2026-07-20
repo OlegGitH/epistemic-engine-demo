@@ -7,8 +7,7 @@ decision:
   subject_type: repository
   subject_id: OlegGitH/epistemic-engine-demo
   risk_level: medium
-  approved: true
-  approved_by: demo-owner
+  approved: false
 provider:
   type: local
 requirements:

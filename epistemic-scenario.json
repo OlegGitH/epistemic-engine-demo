@@ -1,6 +1,6 @@
 {
   "schema_version": "epistemic-branch-scenario/v1",
-  "scenario": "supported-release",
-  "branch": "main",
-  "description": "A fully evidenced release is verified and allowed."
+  "scenario": "bounded-verification",
+  "branch": "scenario/bounded-verification",
+  "description": "Sandbox checks resolve unknowns but deployment remains conditional pending human approval."
 }

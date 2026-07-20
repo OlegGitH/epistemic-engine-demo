@@ -1,0 +1,21 @@
+{
+  "schema_version": "pr-coverage-scenario/v1",
+  "id": "missing-coverage",
+  "title": "PR 103 · Missing security requirement",
+  "description": "The PR covers pagination but provides no assessment or artifact for cursor tamper resistance.",
+  "expected": { "verdict": "INSUFFICIENT_EVIDENCE", "action_allowed": false },
+  "human_approved": false,
+  "request": "Add cursor pagination and ensure clients cannot alter cursors to access another account's meals.",
+  "requirements": [
+    { "id": "cursor-api", "text": "The meals API returns and accepts a next cursor.", "critical": true, "required_evidence_types": ["code_diff", "test_result"] },
+    { "id": "tenant-isolation", "text": "A cursor cannot be altered or replayed to read another account's meals.", "critical": true, "required_evidence_types": ["code_diff", "test_result"] }
+  ],
+  "pull_request": { "number": 103, "title": "Paginate meals", "description": "Adds base64 cursors and happy-path tests." },
+  "artifacts": [
+    { "id": "diff-pagination", "kind": "code_diff", "path": "src/meals-api.mjs", "summary": "Adds unsigned base64 cursors." },
+    { "id": "test-pagination", "kind": "test_result", "path": "test/meals-api.test.mjs", "summary": "Happy-path pagination passes." }
+  ],
+  "recorded_assessments": [
+    { "requirement_id": "cursor-api", "status": "passed", "confidence": 0.97, "rationale": "The implementation and test cover basic pagination.", "evidence_refs": ["diff-pagination", "test-pagination"] }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "schema_version": "pr-coverage-scenario/v1",
+  "id": "contradicted",
+  "title": "PR 104 · Contradicted by tests",
+  "description": "The PR text claims backward compatibility, but a supplied legacy-client test fails.",
+  "expected": { "verdict": "CONTRADICTED", "action_allowed": false },
+  "human_approved": true,
+  "request": "Rename the health field without breaking clients that still read health_score.",
+  "requirements": [
+    { "id": "new-field", "text": "Responses expose the new nutrition_score field.", "critical": true, "required_evidence_types": ["code_diff", "test_result"] },
+    { "id": "legacy-field", "text": "Clients reading health_score continue to work during the deprecation window.", "critical": true, "required_evidence_types": ["test_result"] }
+  ],
+  "pull_request": { "number": 104, "title": "Rename health score", "description": "Renames health_score to nutrition_score and claims compatibility." },
+  "artifacts": [
+    { "id": "diff-rename", "kind": "code_diff", "path": "src/classifier.mjs", "summary": "Returns nutrition_score and removes health_score." },
+    { "id": "test-new-client", "kind": "test_result", "path": "test/new-client.test.mjs", "summary": "New-client test passes." },
+    { "id": "test-legacy-client", "kind": "test_result", "path": "test/legacy-client.test.mjs", "summary": "Legacy client fails because health_score is undefined." }
+  ],
+  "recorded_assessments": [
+    { "requirement_id": "new-field", "status": "passed", "confidence": 0.99, "rationale": "The diff and passing new-client test cover nutrition_score.", "evidence_refs": ["diff-rename", "test-new-client"] },
+    { "requirement_id": "legacy-field", "status": "failed", "confidence": 0.99, "rationale": "The legacy-client test directly fails and the diff removes the old field.", "evidence_refs": ["diff-rename", "test-legacy-client"] }
+  ]
+}

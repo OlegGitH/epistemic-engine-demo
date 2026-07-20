@@ -1,0 +1,27 @@
+{
+  "schema_version": "pr-coverage-scenario/v1",
+  "id": "fully-covered",
+  "title": "PR 101 · Fully covered request",
+  "description": "Every requested behavior has direct code, test, or documentation evidence.",
+  "expected": { "verdict": "VERIFIED", "action_allowed": true },
+  "human_approved": true,
+  "request": "Add cursor pagination to the meals API, reject malformed cursors, preserve the old unpaginated client, and document the migration.",
+  "requirements": [
+    { "id": "cursor-api", "text": "The meals API returns a next cursor and accepts it on the following request.", "critical": true, "required_evidence_types": ["code_diff", "test_result"] },
+    { "id": "invalid-cursor", "text": "Malformed cursors return HTTP 400 without exposing internal details.", "critical": true, "required_evidence_types": ["code_diff", "test_result"] },
+    { "id": "compatibility", "text": "Existing clients that omit cursor parameters keep their previous behavior.", "critical": true, "required_evidence_types": ["test_result"] },
+    { "id": "migration-docs", "text": "The API documentation explains pagination and migration for existing clients.", "critical": true, "required_evidence_types": ["custom"] }
+  ],
+  "pull_request": { "number": 101, "title": "Add cursor pagination to meals", "description": "Implements opaque cursors, validation, legacy behavior, and migration guidance." },
+  "artifacts": [
+    { "id": "diff-pagination", "kind": "code_diff", "path": "src/meals-api.mjs", "summary": "Implements opaque next cursors and validation." },
+    { "id": "test-pagination", "kind": "test_result", "path": "test/meals-api.test.mjs", "summary": "Covers first page, next page, malformed cursor, and clients without cursor parameters; 14/14 pass." },
+    { "id": "docs-pagination", "kind": "custom", "path": "docs/meals-pagination.md", "summary": "Documents cursor use and legacy-client migration." }
+  ],
+  "recorded_assessments": [
+    { "requirement_id": "cursor-api", "status": "passed", "confidence": 0.98, "rationale": "Implementation and passing pagination tests directly cover both cursor production and consumption.", "evidence_refs": ["diff-pagination", "test-pagination"] },
+    { "requirement_id": "invalid-cursor", "status": "passed", "confidence": 0.97, "rationale": "The diff validates cursors and the malformed-cursor test passes.", "evidence_refs": ["diff-pagination", "test-pagination"] },
+    { "requirement_id": "compatibility", "status": "passed", "confidence": 0.95, "rationale": "A passing regression case exercises clients that omit cursor parameters.", "evidence_refs": ["test-pagination"] },
+    { "requirement_id": "migration-docs", "status": "passed", "confidence": 0.96, "rationale": "The new guide explains pagination and migration behavior.", "evidence_refs": ["docs-pagination"] }
+  ]
+}

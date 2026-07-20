@@ -12,6 +12,8 @@ Codex accelerated the application scaffold, privacy-boundary tests, evidence gen
 
 The demo itself stays deterministic so judges can reproduce every branch outcome. The parent Engine contains the live GPT-5.6 Responses API analyzer and approval-gated official Codex SDK verification worker; those model integrations propose structure and bounded tests but do not own the final policy verdict.
 
+The separate [PR requirement coverage lab](docs/pr-requirement-coverage-lab.md) compares written requests with PR text and supplied code, test, and documentation artifacts. Its five scenarios prove that the Engine allows complete coverage, marks partial work conditional, catches missing requirements, blocks contradictions, and rejects high model confidence that has no evidence reference.
+
 Supported platforms are Windows, macOS, and Linux with Node.js 20 or newer. This repository is licensed under the [MIT License](LICENSE).
 
 ## Live result
@@ -41,6 +43,7 @@ With the Epistemic Engine running on port `8080`, exercise its dependency-free f
 
 ```bash
 npm run test:engine
+npm run test:pr-review
 npm run test:persistence
 ```
 
@@ -69,6 +72,7 @@ The full-scope harness makes every expected outcome executable:
 | Authentication lifecycle | Invalid and revoked ingest tokens rejected; rotation restores the connection |
 | Dashboard aggregation | Runs, claims, evidence, contradictions, reports, AI usage, and certificates aggregated |
 | Streaming | Run endpoint emits an SSE graph snapshot |
+| PR request coverage | Complete, partial, missing, contradicted, and confidence-only assessments reach distinct evidence-bound verdicts |
 
 The GitHub workflow starts a pinned Engine with a PostgreSQL service, runs this matrix, restarts the Engine, and proves that the account state and certificate digest persist. Optional Docker/Codex/OpenAI integrations and GCP infrastructure remain separate integration environments and are listed explicitly as exclusions in the generated report.
 

@@ -1,0 +1,17 @@
+{
+  "schema_version": "pr-coverage-scenario/v1",
+  "id": "confidence-only",
+  "title": "PR 105 · Confidence without evidence",
+  "description": "The reviewer sounds certain, but cites no concrete artifact, so the Engine keeps the claim open.",
+  "expected": { "verdict": "INSUFFICIENT_EVIDENCE", "action_allowed": false },
+  "human_approved": false,
+  "request": "Ensure failed food analyses are retried exactly once.",
+  "requirements": [
+    { "id": "single-retry", "text": "A failed analysis is retried once and never more than once.", "critical": true, "required_evidence_types": ["code_diff", "test_result"] }
+  ],
+  "pull_request": { "number": 105, "title": "Reliable analysis retry", "description": "The author states that retries are correct." },
+  "artifacts": [],
+  "recorded_assessments": [
+    { "requirement_id": "single-retry", "status": "passed", "confidence": 0.99, "rationale": "The PR description says the retry behavior is implemented.", "evidence_refs": [] }
+  ]
+}

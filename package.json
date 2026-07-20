@@ -11,8 +11,9 @@
     "evidence": "node scripts/write-evidence.mjs",
     "test:engine": "node scripts/check-engine-scope.mjs",
     "test:scenario": "node scripts/run-branch-scenario.mjs",
+    "test:pr-review": "node scripts/run-pr-review-scenarios.mjs",
     "test:persistence": "node scripts/check-persistence.mjs",
-    "test:full": "npm test && npm run smoke && npm run evidence && npm run test:engine"
+    "test:full": "npm test && npm run smoke && npm run evidence && npm run test:engine && npm run test:pr-review"
   },
   "engines": {
     "node": ">=20"

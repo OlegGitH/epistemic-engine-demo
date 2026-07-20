@@ -1,0 +1,25 @@
+{
+  "schema_version": "pr-coverage-scenario/v1",
+  "id": "partially-covered",
+  "title": "PR 102 · Partial request coverage",
+  "description": "Core pagination works, but compatibility and migration coverage are incomplete.",
+  "expected": { "verdict": "VERIFIED_WITH_CONDITIONS", "action_allowed": false },
+  "human_approved": false,
+  "request": "Add cursor pagination to the meals API, preserve old clients, and document migration.",
+  "requirements": [
+    { "id": "cursor-api", "text": "The meals API returns and accepts an opaque next cursor.", "critical": true, "required_evidence_types": ["code_diff", "test_result"] },
+    { "id": "compatibility", "text": "Clients that omit cursor parameters keep their previous behavior.", "critical": true, "required_evidence_types": ["test_result"] },
+    { "id": "migration-docs", "text": "The API documentation explains migration for existing clients.", "critical": true, "required_evidence_types": ["custom"] }
+  ],
+  "pull_request": { "number": 102, "title": "Start meals pagination", "description": "Adds the cursor implementation and a happy-path test. Migration notes are a draft." },
+  "artifacts": [
+    { "id": "diff-pagination", "kind": "code_diff", "path": "src/meals-api.mjs", "summary": "Adds opaque next cursors." },
+    { "id": "test-happy-path", "kind": "test_result", "path": "test/meals-api.test.mjs", "summary": "The first-page and next-page cases pass; no legacy-client case exists." },
+    { "id": "docs-draft", "kind": "custom", "path": "README.md", "summary": "Mentions pagination but does not explain migration." }
+  ],
+  "recorded_assessments": [
+    { "requirement_id": "cursor-api", "status": "passed", "confidence": 0.96, "rationale": "The implementation and happy-path test cover cursor production and consumption.", "evidence_refs": ["diff-pagination", "test-happy-path"] },
+    { "requirement_id": "compatibility", "status": "partial", "confidence": 0.91, "rationale": "The implementation may preserve defaults, but no regression test exercises an old client.", "evidence_refs": ["diff-pagination"] },
+    { "requirement_id": "migration-docs", "status": "partial", "confidence": 0.94, "rationale": "Pagination is mentioned, but concrete migration instructions are absent.", "evidence_refs": ["docs-draft"] }
+  ]
+}

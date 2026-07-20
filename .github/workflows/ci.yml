@@ -19,7 +19,7 @@ jobs:
       - run: npm run smoke
       - run: npm run evidence
       - name: Evaluate Epistemic release decision
-        uses: OlegGitH/epistemic-engine/adapters/github-action@c8f71ba15188f9ef9cee32f3a49d63a4b55eab0d
+        uses: OlegGitH/epistemic-engine/adapters/github-action@2cc455287177bff47530963a2c474df92891034d
         with:
           config: .epistemic.yaml
           certificate: .epistemic/certificate.json
@@ -67,7 +67,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: OlegGitH/epistemic-engine
-          ref: c8f71ba15188f9ef9cee32f3a49d63a4b55eab0d
+          ref: 2cc455287177bff47530963a2c474df92891034d
           path: .engine
       - uses: actions/setup-go@v5
         with:
@@ -106,6 +106,10 @@ jobs:
         env:
           EPISTEMIC_REQUIRE_DURABLE: "true"
         run: npm run test:scenario
+      - name: Exercise PR requirement coverage matrix
+        env:
+          EPISTEMIC_REQUIRE_DURABLE: "true"
+        run: npm run test:pr-review
       - name: Restart Engine and prove persisted account state
         env:
           DATABASE_URL: postgres://epistemic:epistemic@127.0.0.1:5432/epistemic?sslmode=disable
@@ -138,5 +142,8 @@ jobs:
             .epistemic/branch-scenario-report.json
             .epistemic/branch-certificate.json
             .epistemic/branch-certificate-report.md
+            .epistemic/pr-review-suite-report.json
+            .epistemic/pr-review/*.json
+            .epistemic/pr-review/*.md
             .epistemic/persistence-report.json
             epistemic-engine.log

@@ -24,6 +24,9 @@ assert.match(humanReport.markdown, /Epistemic Decision Report/);
 let branchScenario = null;
 if (await exists(".epistemic/branch-scenario-report.json")) {
   const scenarioReport = JSON.parse(await readFile(".epistemic/branch-scenario-report.json", "utf8"));
+  if (normalizeEndpoint(scenarioReport.engine?.endpoint) !== normalizeEndpoint(endpoint)) {
+    console.log(`skipping branch persistence probe from another Engine: ${scenarioReport.engine?.endpoint || "unknown"}`);
+  } else {
   const scenarioProbe = scenarioReport.persistence_probe;
   assert.ok(scenarioProbe?.account_id && scenarioProbe?.run_id && scenarioProbe?.decision_id && scenarioProbe?.certificate_digest);
   const scenarioDashboard = await get(`/v1/accounts/${scenarioProbe.account_id}/dashboard`);
@@ -42,6 +45,30 @@ if (await exists(".epistemic/branch-scenario-report.json")) {
     certificate_digest:scenarioProbe.certificate_digest,
     persisted:true
   };
+  }
+}
+
+let prReviewSuite = null;
+if (await exists(".epistemic/pr-review-suite-report.json")) {
+  const suiteReport = JSON.parse(await readFile(".epistemic/pr-review-suite-report.json", "utf8"));
+  assert.ok(Array.isArray(suiteReport.persistence_probes) && suiteReport.persistence_probes.length >= 5);
+  for (const suiteProbe of suiteReport.persistence_probes) {
+    const suiteGraph = await get(`/v1/runs/${suiteProbe.run_id}/graph`);
+    const suiteCertificate = await get(`/v1/decisions/${suiteProbe.decision_id}/certificate`);
+    const suiteHumanReport = await get(`/v1/decisions/${suiteProbe.decision_id}/certificate/report`);
+    assert.equal(suiteGraph.run.id, suiteProbe.run_id);
+    assert.equal(suiteCertificate.proof.digest, suiteProbe.certificate_digest);
+    assert.equal(suiteHumanReport.proof.digest, suiteProbe.certificate_digest);
+  }
+  const suiteDashboard = await get(`/v1/accounts/${suiteReport.account_id}/dashboard`);
+  assert.equal(suiteDashboard.account.id, suiteReport.account_id);
+  assert.ok(suiteDashboard.certificates.length >= suiteReport.persistence_probes.length);
+  prReviewSuite = {
+    account_id:suiteReport.account_id,
+    scenarios:suiteReport.persistence_probes.length,
+    certificates:suiteReport.persistence_probes.length,
+    persisted:true
+  };
 }
 
 const result = {
@@ -54,7 +81,8 @@ const result = {
   decision_id:probe.decision_id,
   certificate_digest:probe.certificate_digest,
   persisted:{ account:true, project:true, run_graph:true, certificate:true, human_report:true },
-  branch_scenario:branchScenario
+  branch_scenario:branchScenario,
+  pr_review_suite:prReviewSuite
 };
 await writeFile(".epistemic/persistence-report.json", JSON.stringify(result, null, 2) + "\n");
 console.log("epistemic-postgresql-restart-persistence-ok");
@@ -73,4 +101,8 @@ async function exists(path) {
   } catch {
     return false;
   }
+}
+
+function normalizeEndpoint(value) {
+  return String(value || "").replace(/\/$/, "");
 }

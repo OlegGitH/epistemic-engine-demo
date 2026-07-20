@@ -1,6 +1,8 @@
 node_modules/
 .epistemic/*.json
 .epistemic/*.md
+.epistemic/**/*.json
+.epistemic/**/*.md
 !.epistemic/.gitkeep
 coverage/
 .DS_Store

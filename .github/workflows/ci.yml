@@ -106,15 +106,6 @@ jobs:
         env:
           EPISTEMIC_REQUIRE_DURABLE: "true"
         run: npm run test:scenario
-      - name: Publish branch scenario to Epistemic dashboard
-        env:
-          EPISTEMIC_ENDPOINT: ${{ vars.EPISTEMIC_ENDPOINT }}
-          EPISTEMIC_INGEST_TOKEN: ${{ secrets.EPISTEMIC_INGEST_TOKEN }}
-          EPISTEMIC_AI_SYSTEM_ID: ${{ vars.EPISTEMIC_AI_SYSTEM_ID }}
-          EPISTEMIC_CERTIFICATE_PATH: .epistemic/branch-certificate.json
-          EPISTEMIC_REPORT_PATH: .epistemic/branch-scenario-report.json
-          EPISTEMIC_EXTERNAL_ID_SUFFIX: branch-scenario
-        run: node scripts/publish-epistemic.mjs
       - name: Restart Engine and prove persisted account state
         env:
           DATABASE_URL: postgres://epistemic:epistemic@127.0.0.1:5432/epistemic?sslmode=disable

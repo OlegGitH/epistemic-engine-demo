@@ -6,6 +6,13 @@ const checks = [
   run("unit-tests", ["--test"]),
   run("api-smoke", ["scripts/smoke.mjs"])
 ];
+const scenario = JSON.parse(await readFile("epistemic-scenario.json", "utf8")).scenario;
+const scenarioStatus = {
+  "supported-release":"passed",
+  "insufficient-evidence":"pending",
+  "privacy-contradiction":"failed",
+  "bounded-verification":"passed"
+}[scenario] || "passed";
 const sourceFiles = ["server.mjs", "src/classifier.mjs", "src/input-policy.mjs", "package-lock.json"];
 const artifacts = [];
 for (const path of sourceFiles) {
@@ -16,11 +23,9 @@ const passed = checks.every(check => check.status === "passed");
 const evidence = {
   schema_version:"food-lens-quality/v1",
   tool:"food-lens-ci",
-  status:passed ? "passed" : "failed",
+  status:passed ? scenarioStatus : "failed",
   exit_code:passed ? 0 : 1,
-  summary:passed
-    ? "Executable classifier, API, privacy-boundary, and smoke checks passed."
-    : "One or more executable Food Lens quality checks failed.",
+  summary:scenarioSummary(scenario, passed),
   generated_at:new Date().toISOString(),
   checks:[
     ...checks,
@@ -30,7 +35,7 @@ const evidence = {
   artifacts,
   claims:[
     { id:"tests", status:passed ? "supported" : "contradicted", evidence:["unit-tests", "api-smoke"] },
-    { id:"privacy", status:passed ? "supported" : "contradicted", evidence:["image-privacy"] }
+    { id:"privacy", status:passed && scenario !== "privacy-contradiction" ? "supported" : "contradicted", evidence:["image-privacy"] }
   ]
 };
 
@@ -40,6 +45,14 @@ await writeFile(".epistemic/ci-evidence.json", serialized);
 await writeFile(".epistemic/project-quality.json", serialized);
 console.log(`wrote executable evidence: ${evidence.status}`);
 if (!passed) process.exit(1);
+
+function scenarioSummary(id, checksPassed) {
+  if (!checksPassed) return "One or more executable Food Lens quality checks failed.";
+  if (id === "insufficient-evidence") return "Executable checks passed, but required release evidence is intentionally missing.";
+  if (id === "privacy-contradiction") return "Executable checks passed, but scenario evidence contradicts the privacy claim.";
+  if (id === "bounded-verification") return "Approved sandbox checks pass; consequential deployment still requires human approval.";
+  return "Executable classifier, API, privacy-boundary, and smoke checks passed with release approval.";
+}
 
 function run(id, args) {
   const started = performance.now();

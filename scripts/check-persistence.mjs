@@ -51,7 +51,14 @@ if (await exists(".epistemic/branch-scenario-report.json")) {
 let prReviewSuite = null;
 if (await exists(".epistemic/pr-review-suite-report.json")) {
   const suiteReport = JSON.parse(await readFile(".epistemic/pr-review-suite-report.json", "utf8"));
-  assert.ok(Array.isArray(suiteReport.persistence_probes) && suiteReport.persistence_probes.length >= 5);
+  const expectedScenarios = suiteReport.totals?.scenarios;
+  assert.ok(Number.isInteger(expectedScenarios) && expectedScenarios > 0, "PR review report does not declare a valid scenario count");
+  assert.equal(suiteReport.persistence_probes?.length, expectedScenarios, "every selected PR scenario must provide a persistence probe");
+  if ((suiteReport.selected_scenario || "all") === "all") {
+    assert.ok(expectedScenarios >= 5, "the main PR review matrix must retain all coverage scenarios");
+  } else {
+    assert.equal(expectedScenarios, 1, "a scenario branch must persist exactly one selected PR review path");
+  }
   for (const suiteProbe of suiteReport.persistence_probes) {
     const suiteGraph = await get(`/v1/runs/${suiteProbe.run_id}/graph`);
     const suiteCertificate = await get(`/v1/decisions/${suiteProbe.decision_id}/certificate`);

@@ -19,7 +19,7 @@ jobs:
       - run: npm run smoke
       - run: npm run evidence
       - name: Evaluate Epistemic release decision
-        uses: OlegGitH/epistemic-engine/adapters/github-action@b98069852c67d87742b004a0182b28981c90b2de
+        uses: OlegGitH/epistemic-engine/adapters/github-action@c8f71ba15188f9ef9cee32f3a49d63a4b55eab0d
         with:
           config: .epistemic.yaml
           certificate: .epistemic/certificate.json
@@ -67,7 +67,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: OlegGitH/epistemic-engine
-          ref: b98069852c67d87742b004a0182b28981c90b2de
+          ref: c8f71ba15188f9ef9cee32f3a49d63a4b55eab0d
           path: .engine
       - uses: actions/setup-go@v5
         with:

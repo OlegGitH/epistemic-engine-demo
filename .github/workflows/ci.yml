@@ -24,7 +24,7 @@ jobs:
           config: .epistemic.yaml
           certificate: .epistemic/certificate.json
       - name: Publish report and certificate to Epistemic dashboard
-        if: always()
+        if: ${{ always() && (github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'docs(')) }}
         env:
           EPISTEMIC_ENDPOINT: ${{ vars.EPISTEMIC_ENDPOINT }}
           EPISTEMIC_INGEST_TOKEN: ${{ secrets.EPISTEMIC_INGEST_TOKEN }}

@@ -14,6 +14,10 @@ The demo itself stays deterministic so judges can reproduce every branch outcome
 
 Supported platforms are Windows, macOS, and Linux with Node.js 20 or newer. This repository is licensed under the [MIT License](LICENSE).
 
+## Live result
+
+Open the [public Epistemic submission dashboard](https://epistemic-dashboard-r7zqwwvzgq-ew.a.run.app/?account=acc_2574df3bf09361265b5fefcf) to review the five final authenticated CI reports and certificates. The workspace shows supported release, insufficient evidence, privacy contradiction, and bounded-verification outcomes produced by the branches in this repository.
+
 ## Run locally
 
 ```bash

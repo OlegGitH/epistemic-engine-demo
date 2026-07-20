@@ -6,7 +6,7 @@ const scope = JSON.parse(await readFile(".epistemic/engine-scope-report.json", "
 const probe = scope.persistence_probe;
 assert.ok(probe?.account_id && probe?.run_id && probe?.decision_id && probe?.certificate_digest, "scope report does not contain a persistence probe");
 
-const health = await get("/healthz");
+const health = await get("/health");
 assert.equal(health.storage, "postgresql");
 assert.equal(health.durable, true);
 const dashboard = await get(`/v1/accounts/${probe.account_id}/dashboard`);

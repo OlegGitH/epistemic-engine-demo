@@ -9,7 +9,7 @@ const durableRequired = process.env.EPISTEMIC_REQUIRE_DURABLE === "true";
 
 const record = (id, detail, values = {}) => checks.push({ id, status:"passed", detail, ...values });
 
-const health = await api("/healthz");
+const health = await api("/health");
 assert.equal(health.body.status, "ok");
 if (durableRequired) {
   assert.equal(health.body.storage, "postgresql");

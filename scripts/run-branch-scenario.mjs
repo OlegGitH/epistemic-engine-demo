@@ -113,7 +113,7 @@ if (process.env.GITHUB_ACTIONS === "true" && manifest.branch) {
 }
 
 const stamp = `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
-const health = (await api("/healthz")).body;
+const health = (await api("/health")).body;
 assert.equal(health.status, "ok");
 if (process.env.EPISTEMIC_REQUIRE_DURABLE === "true") {
   assert.equal(health.storage, "postgresql");

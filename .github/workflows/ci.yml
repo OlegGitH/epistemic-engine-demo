@@ -24,7 +24,7 @@ jobs:
           config: .epistemic.yaml
           certificate: .epistemic/certificate.json
       - name: Publish report and certificate to Epistemic dashboard
-        if: ${{ always() && (github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'docs(')) }}
+        if: ${{ always() && (github.event_name != 'push' || (!startsWith(github.event.head_commit.message, 'docs(') && !contains(github.event.head_commit.message, '[skip-publish]'))) }}
         env:
           EPISTEMIC_ENDPOINT: ${{ vars.EPISTEMIC_ENDPOINT }}
           EPISTEMIC_INGEST_TOKEN: ${{ secrets.EPISTEMIC_INGEST_TOKEN }}
@@ -91,7 +91,7 @@ jobs:
           nohup ../epistemic-control-plane > ../epistemic-engine.log 2>&1 &
           echo $! > ../epistemic-engine.pid
           for attempt in $(seq 1 90); do
-            if curl --fail --silent http://127.0.0.1:8080/healthz >/dev/null; then
+            if curl --fail --silent http://127.0.0.1:8080/health >/dev/null; then
               exit 0
             fi
             sleep 1
@@ -113,13 +113,13 @@ jobs:
         run: |
           kill "$(cat epistemic-engine.pid)"
           for attempt in $(seq 1 30); do
-            if ! curl --fail --silent http://127.0.0.1:8080/healthz >/dev/null; then break; fi
+            if ! curl --fail --silent http://127.0.0.1:8080/health >/dev/null; then break; fi
             sleep 1
           done
           nohup ./epistemic-control-plane >> epistemic-engine.log 2>&1 &
           echo $! > epistemic-engine.pid
           for attempt in $(seq 1 90); do
-            if curl --fail --silent http://127.0.0.1:8080/healthz >/dev/null; then
+            if curl --fail --silent http://127.0.0.1:8080/health >/dev/null; then
               npm run test:persistence
               exit 0
             fi

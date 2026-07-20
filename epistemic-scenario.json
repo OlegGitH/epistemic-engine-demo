@@ -1,6 +1,6 @@
 {
   "schema_version": "epistemic-branch-scenario/v1",
   "scenario": "supported-release",
-  "branch": "main",
+  "branch": "scenario/supported-release",
   "description": "A fully evidenced release is verified and allowed."
 }

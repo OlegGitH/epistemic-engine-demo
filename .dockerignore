@@ -1,0 +1,8 @@
+.git
+.github
+.epistemic
+node_modules
+coverage
+public
+test
+*.log

@@ -1,0 +1,14 @@
+FROM node:24-alpine
+
+WORKDIR /app
+ENV NODE_ENV=production
+
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+
+COPY fixtures/pr-review ./fixtures/pr-review
+COPY scripts/run-pr-review-scenarios.mjs ./scripts/run-pr-review-scenarios.mjs
+COPY src/pr-review.mjs ./src/pr-review.mjs
+
+USER node
+CMD ["node", "scripts/run-pr-review-scenarios.mjs"]

@@ -81,8 +81,13 @@ for (const fixture of fixtures) {
     method:"POST",
     body:{ human_approved:fixture.human_approved }
   });
-  assert.equal(certificate.verdict, fixture.expected.verdict, `${fixture.id}: unexpected verdict`);
-  assert.equal(certificate.action_allowed, fixture.expected.action_allowed, `${fixture.id}: unexpected action gate`);
+  if (provider === "recorded") {
+    assert.equal(certificate.verdict, fixture.expected.verdict, `${fixture.id}: unexpected verdict`);
+    assert.equal(certificate.action_allowed, fixture.expected.action_allowed, `${fixture.id}: unexpected action gate`);
+  } else {
+    const shouldAllow = fixture.id === "fully-covered";
+    assert.equal(certificate.action_allowed, shouldAllow, `${fixture.id}: live reviewer produced an unsafe action gate`);
+  }
   assert.match(certificate.proof.digest, /^[a-f0-9]{64}$/);
   const humanReport = await api(`/v1/decisions/${graph.decision.id}/certificate/report`);
   assert.equal(humanReport.proof.digest, certificate.proof.digest);

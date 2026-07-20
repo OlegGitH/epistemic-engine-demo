@@ -1,7 +1,7 @@
 {
   "schema_version": "epistemic-branch-scenario/v1",
   "scenario": "supported-release",
-  "pr_review_scenario": "all",
-  "branch": "main",
-  "description": "A fully evidenced release is verified and allowed."
+  "pr_review_scenario": "contradicted",
+  "branch": "scenario/pr-contradicted",
+  "description": "Direct test evidence contradicts the PR compatibility claim and blocks the action."
 }

@@ -10,6 +10,7 @@
     "smoke": "node scripts/smoke.mjs",
     "evidence": "node scripts/write-evidence.mjs",
     "test:engine": "node scripts/check-engine-scope.mjs",
+    "test:scenario": "node scripts/run-branch-scenario.mjs",
     "test:persistence": "node scripts/check-persistence.mjs",
     "test:full": "npm test && npm run smoke && npm run evidence && npm run test:engine"
   },

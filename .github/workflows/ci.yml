@@ -102,6 +102,10 @@ jobs:
         env:
           EPISTEMIC_REQUIRE_DURABLE: "true"
         run: npm run test:engine
+      - name: Exercise branch-selected decision path
+        env:
+          EPISTEMIC_REQUIRE_DURABLE: "true"
+        run: npm run test:scenario
       - name: Restart Engine and prove persisted account state
         env:
           DATABASE_URL: postgres://epistemic:epistemic@127.0.0.1:5432/epistemic?sslmode=disable
@@ -131,5 +135,8 @@ jobs:
           if-no-files-found: warn
           path: |
             .epistemic/engine-scope-report.json
+            .epistemic/branch-scenario-report.json
+            .epistemic/branch-certificate.json
+            .epistemic/branch-certificate-report.md
             .epistemic/persistence-report.json
             epistemic-engine.log

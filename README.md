@@ -4,6 +4,16 @@ Food Lens is a deliberately small, transparent image-classification application 
 
 The model is educational only. It is not a medical, nutritional, allergy, or ingredient-identification tool.
 
+## OpenAI Build Week demonstration
+
+Food Lens is the executable demonstration application for the [Epistemic Engine](https://github.com/OlegGitH/epistemic-engine) Developer Tools submission. The application and scenario lab were built during the July 13–21, 2026 submission period with Codex collaboration.
+
+Codex accelerated the application scaffold, privacy-boundary tests, evidence generation, Engine integration, branch scenario matrix, CI persistence proof, and dashboard workflow. The human retained the product decisions: Food Lens remains explicitly educational, raw image data must stay in the browser, blocked epistemic outcomes count as successful tests, and only deterministic policy may authorize deployment.
+
+The demo itself stays deterministic so judges can reproduce every branch outcome. The parent Engine contains the live GPT-5.6 Responses API analyzer and approval-gated official Codex SDK verification worker; those model integrations propose structure and bounded tests but do not own the final policy verdict.
+
+Supported platforms are Windows, macOS, and Linux with Node.js 20 or newer. This repository is licensed under the [MIT License](LICENSE).
+
 ## Run locally
 
 ```bash

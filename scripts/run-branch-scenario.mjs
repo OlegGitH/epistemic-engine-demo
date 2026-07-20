@@ -201,7 +201,10 @@ assert.ok(dashboard.certificates.some(item => item.digest === certificate.proof.
 const dashboardUrl = `${dashboardEndpoint}/?account=${account.id}`;
 const report = {
   schema_version:"epistemic-branch-scenario-result/v1",
+  tool:"epistemic-branch-scenario",
   status:"passed",
+  exit_code:0,
+  summary:scenario.description,
   scenario:scenarioID,
   branch,
   description:scenario.description,

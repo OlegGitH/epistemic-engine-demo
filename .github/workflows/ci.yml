@@ -67,7 +67,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: OlegGitH/epistemic-engine
-          ref: 7db1bd3d4f331347ec3e7c4309c312a74a7723fa
+          ref: 7c993596faaf58f16cf323297cfc764ed19ec2c8
           path: .engine
       - uses: actions/setup-go@v5
         with:

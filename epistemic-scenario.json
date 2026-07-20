@@ -1,7 +1,7 @@
 {
   "schema_version": "epistemic-branch-scenario/v1",
   "scenario": "supported-release",
-  "pr_review_scenario": "all",
-  "branch": "main",
-  "description": "A fully evidenced release is verified and allowed."
+  "pr_review_scenario": "confidence-only",
+  "branch": "scenario/pr-confidence-only",
+  "description": "High reviewer confidence without a valid evidence reference remains insufficient."
 }
